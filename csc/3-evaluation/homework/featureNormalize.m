@@ -16,9 +16,9 @@ end
 for j = 1:size(X_norm,1)
 	for i = 1:size(X,2)
 		if (sigma(i) == 0)
-			X_norm(j,i) = 0			
+			X_norm(j,i) = 0;			
 		elseif
-			X_norm(j,i) = (X_norm(j,i) - mu(i))/sigma(i)
+			X_norm(j,i) = (X_norm(j,i) - mu(i))/sigma(i);
 		end
 	end
 end
