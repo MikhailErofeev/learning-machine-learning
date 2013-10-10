@@ -6,7 +6,7 @@ m = length(ylearn); % number of training examples
 
 theta = [];
 X = [];
-series_size = 50
+series_size = 45
 xlearnMinusOneDivPlus= (xlearn - 1)./(xlearn + 1);
 for n = 0:1:series_size
 	poly = 2/(2*n + 1) * xlearnMinusOneDivPlus.^(2*n + 1);
