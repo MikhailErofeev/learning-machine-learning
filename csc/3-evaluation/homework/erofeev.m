@@ -6,10 +6,10 @@ m = length(ylearn); % number of training examples
 
 theta = [];
 X = [];
-series_size = 40
+series_size = 40;
 xlearnMinusOneDivPlus= (xlearn - 1)./(xlearn + 1);
 for n = 0:1:series_size
-	poly = 2/(2*n + 1) * xlearnMinusOneDivPlus.^(2*n + 1);
+	poly = 2/(2*n + 1) * xlearnMinusOneDivPlus.^(2*n + 1); % series, based on area hyperbolic tangent function
 	X = [X, poly];
 endfor
 theta = pinv(X' * X)*X'*ylearn;
