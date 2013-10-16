@@ -41,14 +41,14 @@ fprintf('Theta computed from the normal equations: \n');
 fprintf('w_0 &= %.2f ')
 for i = 1:length(theta)
 	if (i != 1)
-		printf(", ");
+		fprintf(', ');
 	endif
-	printf("%.2f", theta(i));
+	fprintf('%.2f', theta(i));
 endfor
-printf("\\\\\n");
-fprintf('b_0 &= %.2f \\\\ \n', b);
-fprintf('T&= %.2f \\\\ \n', sum(diff));
-fprintf('\\sqrt{\\frac{T(w_0, b_0)}{n}} &= %.2f \\\\ \n',sqrt(sum(diff)/length(diff)));
+fprintf('\n');
+fprintf('b_0 &= %.2f \n', b);
+fprintf('T&= %.2f \n', sum(diff));
+fprintf('\\sqrt{\\frac{T(w_0, b_0)}{n}} &= %.2f \n',sqrt(sum(diff)/length(diff)));
 
 fprintf('Predict and real values: \n');
 result
