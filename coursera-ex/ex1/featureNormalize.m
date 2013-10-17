@@ -9,19 +9,13 @@ function [X_norm, mu, sigma] = featureNormalize(X)
 X_norm = X;
 mu = zeros(1, size(X, 2));
 sigma = zeros(1, size(X, 2));
-for i = 1:size(X,2)
-	mu(i) = mean(X(:,i));
-	sigma(i) = std(X(:,i));
-end
-for j = 1:size(X_norm,1)
-	for i = 1:size(X,2)
-		if (sigma(i) == 0)
-			X_norm(j,i) = 0			
-		elseif
-			X_norm(j,i) = (X_norm(j,i) - mu(i))/sigma(i)
-		end
-	end
-end
+for i = 1:length(mu)
+    cur_column = X_norm(:, i);
+    mu(i) = mean(cur_column);
+    sigma(i) = std(cur_column);
+    X_norm(:, i) -= mu(i);
+    X_norm(:, i) /= sigma(i);
+endfor
 %X_norm
 
 

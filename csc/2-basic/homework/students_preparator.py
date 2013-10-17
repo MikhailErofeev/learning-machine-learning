@@ -80,12 +80,12 @@ pos  = 0
 for factor,name in zip(result_matrix,result_names):
 	print pos, name
 	pos = pos + 1
-	# print factor
+	#print factor
 	[float(f) for f in factor]
 
-if len(sys.argv) >3:
+if len(sys.argv) >=3:
 	f = open(sys.argv[2], 'w')	
-	for factor in result_matrix:
+	for factor in zip(*result_matrix):
 		f.write(",".join(str(f) for f in factor))
 		f.write("\n")
 	
