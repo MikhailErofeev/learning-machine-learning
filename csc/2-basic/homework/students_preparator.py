@@ -15,21 +15,6 @@ def numerical_with_avg_in_text(values):
 			ret.append(m)
 	return ret
 
-def binary(values):
-	ids = dict()
-	id = 0
-	vals_set = set(values)
-	if len(vals_set) != 2:
-		raise Exception("not binary!!!")
-	for val in vals_set:
-		if val not in ids:				 
-			ids[val] =  id
-			id = id + 1
-	ret = []
-	for val in values:
-		ret.append(ids[val])
-	return ret
-
 def clazz(values, clazzDict, defaultClazz = None):
 	ret = []
 	for val in values:
@@ -91,7 +76,16 @@ for factor in factors_matrix:
 		result_names.append(name)
 		vals = numerical_with_avg_in_text(factor[1:])
 		result_matrix.append(vals)
+pos  = 0
 for factor,name in zip(result_matrix,result_names):
-	# print name
+	print pos, name
+	pos = pos + 1
 	# print factor
-	[float(f) for f in factor]	
+	[float(f) for f in factor]
+
+if len(sys.argv) >3:
+	f = open(sys.argv[2], 'w')	
+	for factor in result_matrix:
+		f.write(",".join(str(f) for f in factor))
+		f.write("\n")
+	
