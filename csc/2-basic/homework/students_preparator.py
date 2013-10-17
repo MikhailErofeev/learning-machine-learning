@@ -63,15 +63,14 @@ for factor in factors_matrix:
 		vals = clazz(factor[1:], {"239": 1}, 0)
 		result_matrix.append(vals)	
 	elif "Школа город" == name:
-		vals = clazz(factor[1:], {"Санкт-Петербург": 1}, 0)
+		vals = clazz(factor[1:], {"Санкт-Петербург": 0}, 1)
 		result_header = "Питер"
 		result_names.append(result_header)
 		result_matrix.append(vals)
 	elif "Тип школы" == name:
-		r_names = set(factor[1:])
-		result_names.extend(r_names)
-		vals = multy_binary(factor[1:])
-		result_matrix.extend(vals)
+		result_names.append("Крутая школа")
+		vals = clazz(factor[1:], {"СОШ": 0, "Лицей": 1, "Гимназия": 1})
+		result_matrix.append(vals)
 	else:
 		result_names.append(name)
 		vals = numerical_with_avg_in_text(factor[1:])
