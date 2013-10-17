@@ -5,6 +5,7 @@ y = data(:, cols);
 m = length(y);
 
 
+
 setenv('GNUTERM','X11')
 
 % Пырю на факторы, ищу зависимости, строю гипотезы
@@ -25,7 +26,12 @@ x = [x, excellent];
 
 [x, mu, sigma] = featureNormalize(x);
 x = [ones(m, 1), x];
-multyCV(x,y)
+withExcellent = multyCV(x,y);
+[x, mu, sigma] = featureNormalize(X(:,2));
+x = [ones(m, 1), x];
+withoutExcellent = multyCV(x,y);
+excellent = withExcellent - withoutExcellent
+
 	
 return
 for i = 0:columns(X);
@@ -39,4 +45,3 @@ for i = 0:columns(X);
 	[theta, mse] = multyCV(x,y);
 	fprintf('%d\t%f\n', i, mse);
 endfor
-%

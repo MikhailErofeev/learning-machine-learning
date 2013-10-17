@@ -71,6 +71,8 @@ for factor in factors_matrix:
 		result_names.append("Крутая школа")
 		vals = clazz(factor[1:], {"СОШ": 0, "Лицей": 1, "Гимназия": 1})
 		result_matrix.append(vals)
+	elif len(set(factor[1:])) == 1:
+		continue
 	else:
 		result_names.append(name)
 		vals = numerical_with_avg_in_text(factor[1:])
