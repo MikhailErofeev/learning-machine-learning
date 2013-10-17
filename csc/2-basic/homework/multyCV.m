@@ -1,20 +1,19 @@
-function [mse] = multyCV(X, y)
+function mses = multyCV(X, y)
 
 m = size(y);
 mses = [];
 data = [X y];
 cols = length(transpose(data(1:1, :)));
+
 for sample = 1:10000;
 	data = data(randperm(size(data,1)),:);	
 	trainX = data(1:m/2,1:cols-1);
 	trainY = data(1:m/2,cols);
 	validationX = data(m/2:m, 1:cols-1); 
 	validationY = data(m/2:m, cols);
-	theta = zeros(size(trainX, 2), 1);
 	theta = pinv(trainX' * trainX)*trainX'*trainY;
 	predict = transpose((transpose(theta) * transpose(validationX)));
 	mse = mean((predict .- validationY) .^2);
-	mses = [mses, mse];
+	mses = [mses mse];
 endfor
 mse = mean(mses);
-end
