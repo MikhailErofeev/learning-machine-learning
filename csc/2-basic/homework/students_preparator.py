@@ -76,7 +76,7 @@ for factor in factors_matrix:
 		result_names.append(name)
 		vals = numerical_with_avg_in_text(factor[1:])
 		result_matrix.append(vals)
-pos  = 0
+pos  = 1
 for factor,name in zip(result_matrix,result_names):
 	print pos, name
 	pos = pos + 1
