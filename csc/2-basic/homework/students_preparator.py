@@ -29,14 +29,33 @@ def binary(values):
 	for val in values:
 		ret.append(ids[val])
 	return ret
+
+def clazz(values, clazzDict, defaultClazz = None):
+	ret = []
+	for val in values:
+		if val in clazzDict:
+			ret.append(clazzDict[val])			
+		else:
+			if defaultClazz != None:
+				ret.append(defaultClazz)
+			else:
+				raise Exception("no def expected!!! ", val)	
+	return ret
+
+def multy_binary(values):
+	ids = dict()
+	id = 1
+	clazz_set = set(values)
+	for clazz in clazz_set:
+		if clazz not in ids:				 
+			ids[clazz] =  id
+			id = id + 1
+	ret = []
+	for val in values:
+		clazzes = [1 if val == clazz else 0 for clazz in clazz_set]
+		ret.append(clazzes)
+	return zip(*ret)
 	
-
-
-val = dict()
-val["М"] = 1
-if "Ж" not in val:
-	print val
-
 	
 src_file = codecs.open(sys.argv[1], "r", "utf-8")
 src_str = src_file.read().encode("utf-8") 
@@ -44,21 +63,35 @@ src_matrix = [[line for line in src_lines.split(",")] for src_lines in src_str.s
 src_file.close()
 factors_matrix = zip(*src_matrix) 
 result_matrix = []
+result_names = []
 for factor in factors_matrix:
 	name = factor[0]
-	print name
-	if "Средний школьный балл" == name:
-		vals = numerical_with_avg_in_text(factor[1:])
-		print vals,
-		result_matrix.append(vals)
-	elif "Пол" == name:
+	if "Пол" == name:
+		result_header = "Мужчина"
+		result_names.append(result_header)
 		haha = [x if x != 'M' else 'М' for x in factor[1:]]
-		vals = binary(haha)
-		print vals,
+		vals = clazz(haha, {"Ж":0, "М":1})
+		result_matrix.append(vals)
+	elif "Школа номер" == name:
+		result_header = "239"
+		result_names.append(result_header)
+		vals = clazz(factor[1:], {"239": 1}, 0)
 		result_matrix.append(vals)	
+	elif "Школа город" == name:
+		vals = clazz(factor[1:], {"Санкт-Петербург": 1}, 0)
+		result_header = "Питер"
+		result_names.append(result_header)
+		result_matrix.append(vals)
+	elif "Тип школы" == name:
+		r_names = set(factor[1:])
+		result_names.extend(r_names)
+		vals = multy_binary(factor[1:])
+		result_matrix.extend(vals)
 	else:
-		for f in factor[1:]:
-			print(f+","),
-	print
-	#print factor[1:]
-
+		result_names.append(name)
+		vals = numerical_with_avg_in_text(factor[1:])
+		result_matrix.append(vals)
+for factor,name in zip(result_matrix,result_names):
+	# print name
+	# print factor
+	[float(f) for f in factor]	
