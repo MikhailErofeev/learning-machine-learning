@@ -26,21 +26,6 @@ def clazz(values, clazzDict, defaultClazz = None):
 			else:
 				raise Exception("no def expected!!! ", val)	
 	return ret
-
-def multy_binary(values):
-	ids = dict()
-	id = 1
-	clazz_set = set(values)
-	for clazz in clazz_set:
-		if clazz not in ids:				 
-			ids[clazz] =  id
-			id = id + 1
-	ret = []
-	for val in values:
-		clazzes = [1 if val == clazz else 0 for clazz in clazz_set]
-		ret.append(clazzes)
-	return zip(*ret)
-	
 	
 src_file = codecs.open(sys.argv[1], "r", "utf-8")
 src_str = src_file.read().encode("utf-8") 
