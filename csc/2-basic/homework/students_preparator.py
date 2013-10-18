@@ -7,7 +7,12 @@ import numpy
 
 def numerical_with_avg_in_text(values):
 	ret = []
-	m = numpy.mean([float(val) for val in values if val.replace(".", "", 1).isdigit()])
+	text_count = sum([1 for val in values if not val.replace(".", "", 1).isdigit()])
+	num_count = sum([1 for val in values if val.replace(".", "", 1).isdigit()])
+	textsPercent = text_count / float(num_count + text_count) 
+	if textsPercent > 0.2:
+		print "WARN: ",textsPercent," texts in numerical" 
+	m = numpy.mean([float(val) for val in values if val.replace(".", "", 1).isdigit()])	
 	for val in values:
 		if val.replace(".", "", 1).isdigit():
 			ret.append(float(val))
@@ -58,13 +63,26 @@ for factor in factors_matrix:
 		result_matrix.append(vals)
 	elif len(set(factor[1:])) == 1:
 		continue
+	elif "Оценка по мнению родителей" == name:
+		f = []
+		for parent,real in zip(factor[1:], result_matrix[1]):
+			if not parent.replace(".","").isdigit():				
+				f.append(0)
+			elif float(parent) > real:
+				f.append(1)
+			else:
+				f.append(-1)
+		result_names.append("Оценка родителей выше");
+		result_matrix.append(f)
 	else:
-		result_names.append(name)
+		result_names.append(name)		
 		vals = numerical_with_avg_in_text(factor[1:])
 		result_matrix.append(vals)
+	if len(result_names) != len(result_matrix):
+		raise Exception(len(result_names),"!=",len(result_matrix))
 pos  = 1
 for factor,name in zip(result_matrix,result_names):
-	print pos, name
+	print "'"+name+"',"
 	pos = pos + 1
 	#print factor
 	[float(f) for f in factor]
