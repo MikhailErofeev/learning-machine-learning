@@ -11,6 +11,7 @@ cols = length(transpose(data(1:1, :)));
 %[trainX, trainY]
 %[theta, mse]= normalEqn(trainX, trainY)
 
+lambda = 0.1;
 
 for sample = 1:10000;
 	data = data(randperm(size(data,1)),:);	
@@ -19,6 +20,9 @@ for sample = 1:10000;
 	validationX = data(m/2:m, 1:cols-1); 
 	validationY = data(m/2:m, cols);
 	theta = pinv(trainX' * trainX)*trainX'*trainY;
+	thetaReg = theta./length(m).*lambda;
+	thetaReg(1) = theta(1);
+	theta = thetaReg;
 	predict = transpose((transpose(theta) * transpose(validationX)));
 	mse = mean((predict .- validationY) .^2);
 	mses = [mses mse];

@@ -17,7 +17,10 @@ FACTORS = [
 'Друзей в ОК/FB/ВК',
 'Расстояние от дома до универа',
 'Ряд в аудитории',
-'Средний периметр головы'
+'Средний периметр головы',
+
+'оценки из крутой школы',
+'оценки из 239'
 ];
 
 setenv('GNUTERM','X11')
@@ -37,20 +40,42 @@ ln, x^n факторов
 SOM
 #}
 
-
 x = X;
+%попробуем сделать моном крутая школа * школьная оценка
+hardSchool = X(:,5).*X(:,2);
+%попробуем сделать моном 239 * школьная оценка
+school239 = X(:,3).*X(:,2);
+%x(:,3) = [];
+plot(school239, y, 'rx', 'MarkerSize', 10);
+
+x = [x, hardSchool, school239];
 [x, mu, sigma] = featureNormalize(x);
 x = [ones(m, 1), x];
-[theta, mu] = normalEqn(x,y)
-size(theta)
-size(FACTORS)
+[theta, mu] = normalEqn(x,y);
+mu
 for i = 1:length(theta);
-	fprintf('%s%f\n', FACTORS(i,:), theta(i))
+	fprintf('%d\t%s\t%f\n',i, FACTORS(i,:), theta(i))
 endfor
 
 %hist(x(:, 4));
-plot(x(:,4), y, 'rx', 'MarkerSize', 10);
-pause
+%plot(x(:,4), y, 'rx', 'MarkerSize', 10);
+%pause
+factorsToBuild = [1,3,4,14];
+
+Xret =[];
+for i = 1:length(factorsToBuild);
+	factor = factorsToBuild(i);
+	Xret = [Xret x(:, factor)];
+endfor
+
+[Xret, y];
+means = multyCV(Xret, y);
+meansS = sum(means);
+meansL = length(means);
+pm = sqrt(sum(means.*means) - meansS*meansS/meansL)/meansL;
+fprintf('%f\t~%f\n', mean(means), pm);
+	
+
 return
 
 
