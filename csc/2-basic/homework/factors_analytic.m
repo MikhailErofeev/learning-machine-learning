@@ -20,7 +20,10 @@ FACTORS = [
 'Средний периметр головы',
 
 'оценки из крутой школы',
-'оценки из 239'
+'оценки из 239',
+'квадрат средней оценки',
+'оценка с 2.5 минусом школьникам 239',
+'отличники из питера',
 ];
 
 setenv('GNUTERM','X11')
@@ -30,51 +33,99 @@ setenv('GNUTERM','X11')
 Начать с наиболее жгучих факторов 
 	Кажется, что в данном случае достаточно только по theta для всего сета
 У фактора должно быть нормальное распределение (построить гистограмму!)
-Посмотреть на отсуствующие факторы. Заменить их лучше, чем средним?
+!Посмотреть на отсуствующие факторы. Заменить их лучше, чем средним?
 Посмотреть на строки, которые дают сильное отклонение? Сколько их? Не обучаться на них?
-Посмотреть корреляцию факторов, построить матрицу корреляций. 
-	Выкинуть низкую корреляцию и объединить факторы с высокой (как?)
-Добавить регуляризацию к параметру. Искать оптимальный по multyCV
+%Посмотреть корреляцию факторов, построить матрицу корреляций. 
+	%Выкинуть низкую корреляцию и объединить факторы с высокой (как?)
+!Добавить регуляризацию к параметру. Искать оптимальный по multyCV
 ln, x^n факторов
 получение новых факторов из существующих 
 SOM
 #}
 
 x = X;
-%попробуем сделать моном крутая школа * школьная оценка
-hardSchool = X(:,5).*X(:,2);
-%попробуем сделать моном 239 * школьная оценка
-school239 = X(:,3).*X(:,2);
-%x(:,3) = [];
-plot(school239, y, 'rx', 'MarkerSize', 10);
 
-x = [x, hardSchool, school239];
+schoolEval = X(:,2);
+%попробуем сделать моном крутая школа * школьная оценка
+hardSchool = X(:,5).*schoolEval;
+%попробуем сделать моном 239 * школьная оценка
+school239 = X(:,3).*schoolEval;
+meanEvalSqr = schoolEval.^2;
+excellent = X(:, 2) == 5;
+notPiter = X(:, 4) == 0;
+girl = X(:, 1) == 0;
+excellentGirl = excellent .* girl==0;
+parentsMore (X:3)=-1;
+index = transpose(1: m);
+%пробую занизить иногородних отличников - не работает. всех отличников - тоже
+excellentFromPiter = excellent .* notPiter==0;
+experimental = 0.5 * excellentFromPiter + schoolEval;
+[excellent excellentFromPiter schoolEval experimental];
+
+plus239ToMean =  schoolEval - 2.5 * (school239 > 0);
+
+#{
+[x, mu, sigma] = featureNormalize([schoolEval, plus239ToMean]);
+plot(
+	x(:,1), y, 'rx' , 'MarkerSize', 10,
+	x(:,2), y, 'go' , 'MarkerSize', 10
+	);
+pause
+return
+#}
+
+% = X(:,2) .+ hardSchool > 0 
+%plot(school239, y, 'rx', 'MarkerSize', 10);
+
+%базовый скор - 6.55
+%+средний балл - 6.32
+%+оценка родителей выше - 5.82
+%+ср оценка с 2.5 минусом школьникам 239 - 4.67
+x = [x, hardSchool, school239, meanEvalSqr, plus239ToMean, experimental];
 [x, mu, sigma] = featureNormalize(x);
 x = [ones(m, 1), x];
+x(:, 18) = index;
 [theta, mu] = normalEqn(x,y);
-mu
-for i = 1:length(theta);
-	fprintf('%d\t%s\t%f\n',i, FACTORS(i,:), theta(i))
+for i = 1:length(theta);	
+	fprintf('%d\t%s\t%f',i, FACTORS(i,:), theta(i))		
+	fprintf('\n')
 endfor
-
-%hist(x(:, 4));
-%plot(x(:,4), y, 'rx', 'MarkerSize', 10);
-%pause
-factorsToBuild = [1,3,4,14];
-
+mu
+factorsToBuild = [1, 3, 8, 17];
 Xret =[];
 for i = 1:length(factorsToBuild);
 	factor = factorsToBuild(i);
 	Xret = [Xret x(:, factor)];
 endfor
 
+[theta, mu] = normalEqn(Xret, y);
+
+fprintf('\n')
+fprintf('\n')
+fprintf('SHIP\n')
+for i = 1:length(factorsToBuild);
+	factor = factorsToBuild(i);
+	fprintf('%d\t%s\t%f',i, FACTORS(factor,:), theta(i))		
+	fprintf('\n')
+endfor
+
+mu
+%hist(x(:,18));
+
+regularizationLamdas = [0, 0.25, 0.5, 0.75, 1, 1.5, 2]; 
 [Xret, y];
-means = multyCV(Xret, y);
-meansS = sum(means);
-meansL = length(means);
-pm = sqrt(sum(means.*means) - meansS*meansS/meansL)/meansL;
-fprintf('%f\t~%f\n', mean(means), pm);
 	
+#{for drop = [1:m];	% пробую выбрасывать плохие строчки, но нифига не получается
+	for lambda = regularizationLamdas;
+		means = multyCV(Xret, y, lambda, []);
+		meansS = sum(means);
+		meansL = length(means);
+		pm = sqrt(sum(means.*means) - meansS*meansS/meansL)/meansL;
+		meanError = mean(means);
+		fprintf('%f\t%f\t~%f\n',lambda, meanError, pm);
+	endfor	
+#}endfor
+
 
 return
 
