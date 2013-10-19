@@ -23,7 +23,7 @@ FACTORS = [
 'оценки из 239',
 'квадрат средней оценки',
 'оценка с 2.5 минусом школьникам 239',
-'отличники из питера',
+'экспериментальный трешак'
 ];
 
 setenv('GNUTERM','X11')
@@ -43,7 +43,7 @@ setenv('GNUTERM','X11')
 !Добавить регуляризацию к параметру. Искать оптимальный по multyCV
 ln, x^n факторов
 получение новых факторов из существующих 
-SOM
+%SOM
 #}
 
 x = X;
@@ -55,6 +55,7 @@ hardSchool = X(:,5).*schoolEval;
 school239 = X(:,3).*schoolEval;
 meanEvalSqr = schoolEval.^2;
 excellent = X(:, 2) == 5;
+attend = 1 - X(:, 6);
 notPiter = X(:, 4) == 0;
 girl = X(:, 1) == 0;
 excellentGirl = excellent .* girl==0;
@@ -66,7 +67,13 @@ experimental = 0.5 * excellentFromPiter + schoolEval;
 [excellent excellentFromPiter schoolEval experimental];
 
 plus239ToMean =  schoolEval - 2.5 * (school239 > 0);
-
+minAtt = attend < 0.5;
+experimental = attend;
+[a, mu, sigma] = featureNormalize(1 - 2 * attend);
+%plot(a, y, 'rx' , 'MarkerSize', 10)
+%hist(a)
+%pause
+%return
 #{
 [x, mu, sigma] = featureNormalize([schoolEval, plus239ToMean]);
 plot(
@@ -77,9 +84,6 @@ pause
 return
 #}
 
-% = X(:,2) .+ hardSchool > 0 
-%plot(school239, y, 'rx', 'MarkerSize', 10);
-
 %базовый скор - 6.55
 %+средний балл - 6.32
 %+оценка родителей выше - 5.82
@@ -87,14 +91,28 @@ return
 x = [x, hardSchool, school239, meanEvalSqr, plus239ToMean, experimental];
 [x, mu, sigma] = featureNormalize(x);
 x = [ones(m, 1), x];
-x(:, 18) = index;
 [theta, mu] = normalEqn(x,y);
 for i = 1:length(theta);	
 	fprintf('%d\t%s\t%f',i, FACTORS(i,:), theta(i))		
 	fprintf('\n')
 endfor
 mu
+
+#{
+for i=2:length(theta);
+	for j=1:length(theta);
+		f1 = x(:,i);
+		f2 = x(:,j);
+		cor = cov(f1,f2);
+		fprintf('%s\t%s\t%f\n',FACTORS(i,:), FACTORS(j,:), cor);
+	endfor
+endfor
+#}
+
+
 factorsToBuild = [1, 3, 8, 17];
+
+
 Xret =[];
 for i = 1:length(factorsToBuild);
 	factor = factorsToBuild(i);
@@ -115,19 +133,20 @@ endfor
 mu
 %hist(x(:,18));
 
-regularizationLamdas = [0, 0.25, 0.5, 0.75, 1, 1.5, 2]; 
+regularizationLamdas = [0, 0.1, 0.5, 0.75, 1, 1.5, 2]; 
 [Xret, y];
 	
-#{for drop = [1:m];	% пробую выбрасывать плохие строчки, но нифига не получается
+for drop = [-1];	% пробую выбрасывать плохие строчки, но нифига не получается
+	drop
 	for lambda = regularizationLamdas;
-		means = multyCV(Xret, y, lambda, []);
+		means = multyCV(Xret, y, lambda, [drop]);
 		meansS = sum(means);
 		meansL = length(means);
 		pm = sqrt(sum(means.*means) - meansS*meansS/meansL)/meansL;
 		meanError = mean(means);
 		fprintf('%f\t%f\t~%f\n',lambda, meanError, pm);
 	endfor	
-#}endfor
+endfor
 
 
 return
