@@ -19,13 +19,15 @@ for sample = 1:10000;
 	trainX = data(1:m/2,1:cols-1);
 	trainY = data(1:m/2,cols);
 
-	index = transpose(r);
-	index = index(1:m/2-1);	
-	for i=drops;
-		pos = find(index == i);
-		trainX(pos,:) = [];
-		trainY(pos,:) = [];
-	endfor
+	if (length(drops) > 0);
+		index = transpose(r);
+		index = index(1:m/2-1);	
+		for i=drops;
+			pos = find(index == i);
+			trainX(pos,:) = [];
+			trainY(pos,:) = [];
+		endfor
+	endif
 
 	validationX = data(m/2:m, 1:cols-1); 
 	validationY = data(m/2:m, cols);
