@@ -14,9 +14,11 @@ XTest = test(:, 3:cols);
 lambda = 0.1;
 [all_theta] = oneVsAll(X, y, num_labels, lambda);
 pred = predictOneVsAll(all_theta, X);
-fprintf('\nLearn Set Accuracy: %f\n', mean(double(pred == y)) * 100);
-
+coh = cohen(pred, y)
+fprintf('\nLearn Set Cohen Accuracy: %f\n', coh);
 
 %test logic regression
 pred = predictOneVsAll(all_theta, XTest);
-fprintf('\nTest Set Accuracy: %f\n', mean(double(pred == yTest)) * 100);
+coh = cohen(pred, yTest)
+
+fprintf('\nTest Set Cohen Accuracy: %f\n', coh);

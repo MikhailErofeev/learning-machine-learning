@@ -22,7 +22,7 @@ X = [ones(m, 1) X];
 
 % Hint: theta(:) will return a column vector.
 
-options = optimset('GradObj', 'on', 'MaxIter', 10);
+options = optimset('GradObj', 'on', 'MaxIter', 3);
 
 for c = 1: num_labels
 	initial_theta = zeros(n + 1, 1);
