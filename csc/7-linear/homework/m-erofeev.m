@@ -11,14 +11,23 @@ cols = length(transpose(test(1:1, :)));
 XTest = test(:, 3:cols);
 
 %train logic regression
-lambda = 0.1;
-[all_theta] = oneVsAll(X, y, num_labels, lambda);
-pred = predictOneVsAll(all_theta, X);
-coh = cohen(pred, y)
-fprintf('\nLearn Set Cohen Accuracy: %f\n', coh);
+best = -1;
+bestLambda = -1;
+regularizationLamdas = [0.005, 0.1, 0.2, 0.3, 0.5, 0.75, 1,]; 
+for lambda = regularizationLamdas;
+	[all_theta] = oneVsAll(X, y, num_labels, lambda);
+	pred = predictOneVsAll(all_theta, X);
+	coh = cohen(pred, y);
+	if (best < coh);
+		best = coh;
+		bestLambda = lambda;
+	endif
+	fprintf('\nLearn Set Cohen Accuracy: %f\n', coh);
+
+endfor
 
 %test logic regression
 pred = predictOneVsAll(all_theta, XTest);
-coh = cohen(pred, yTest)
+coh = cohen(pred, yTest);
 
 fprintf('\nTest Set Cohen Accuracy: %f\n', coh);

@@ -22,7 +22,7 @@ X = [ones(m, 1) X];
 
 % Hint: theta(:) will return a column vector.
 
-options = optimset('GradObj', 'on', 'MaxIter', 3);
+options = optimset('GradObj', 'on', 'MaxIter', 10);
 
 for c = 1: num_labels
 	initial_theta = zeros(n + 1, 1);
@@ -34,6 +34,6 @@ for c = 1: num_labels
 	%fprintf("as1 %f\n", size(all_theta(c),1));
 	%fprintf("as2 %f\n", size(all_theta(c),2));
 	all_theta(c,:) = theta';
-end
+end	
 
 end
