@@ -1,4 +1,4 @@
-function [all_theta] = oneVsAll(X, y, num_labels, lambda)
+function [all_theta] = oneVsAll(X, y, num_labels, lambda, iters)
 %ONEVSALL trains multiple logistic regression classifiers and returns all
 %the classifiers in a matrix all_theta, where the i-th row of all_theta 
 %corresponds to the classifier for label i
@@ -22,7 +22,7 @@ X = [ones(m, 1) X];
 
 % Hint: theta(:) will return a column vector.
 
-options = optimset('GradObj', 'on', 'MaxIter', 10);
+options = optimset('GradObj', 'on', 'MaxIter', iters);
 
 for c = 1: num_labels
 	initial_theta = zeros(n + 1, 1);

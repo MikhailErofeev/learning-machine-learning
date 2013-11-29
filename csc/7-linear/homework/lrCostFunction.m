@@ -19,17 +19,16 @@ J = 0;
 hx = zeros(m);
 hx = sigmoid(X*theta);
 J = -(1/m)*( (y'*log(hx)) + (1-y)' *log(1-hx));
-temp =  theta.*theta;
-temp(1) =  0;
 J = J + sum(theta(2:end).^2)*lambda/(2*m);
 
 
-temp = zeros(size(theta)); 
+reg = zeros(size(theta)); 
 grad = zeros(size(theta));
 grad = X'*(hx - y)/m;
-temp =  (lambda/m)*theta;
-temp(1) =  0;
-grad = grad + temp;
+
+reg =  (lambda/m)*theta;
+reg(1) =  0;
+grad = grad + reg;
 %grad = grad/m;
 
 
