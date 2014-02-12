@@ -11,11 +11,6 @@ m = length(y); % number of training examples
 % You need to return the following variables correctly 
 J = 0;
 
-%for i  = 1:m
-%  J = J + (- y(i)*log(sigmoid(sum(theta' .* X(i,:)))) - (1-y(i))*log(1-sigmoid(sum(theta' .* X(i,:)))));
-%end
-%J = J / m;
-
 hx = zeros(m);
 hx = sigmoid(X*theta);
 J = -(1/m)*( (y'*log(hx)) + (1-y)' *log(1-hx));
